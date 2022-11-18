@@ -85,7 +85,39 @@ par(mfrow=c(2,1))
 plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="lin")
 plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist")
 
+# Back in Time
 
+p224r63_1988 <- brick("p224r63_1988_masked.grd")
+p224r63_1988
 
+p224r63_2011 <- brick("p224r63_2011_masked.grd")
+p224r63_2011
 
+plotRGB(p224r63_1988, r=3, g=2, b=1, stretch="lin")
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="lin")
+plotRGB(p224r63_1988, r=3, g=4, b=2, stretch="lin")
+
+#Exercise: make a multiframe with 2 rows and 1 column plotting the 1988 and the 2011 images
+par(mfrow=c(2,1))
+plotRGB(p224r63_1988, r=3, g=2, b=1, stretch="lin")
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="lin")
+
+# calculating the difference between images (pixel by pixel)
+# multitemporal analysis
+
+difnir <- p224r63_1988[[4]] - p224r63_2011[[4]]
+
+cl <- colorRampPalette(c("orange", "yellow", "black"))(100)
+plot(difnir, col=cl)
+
+###### Difference Vegetation Index
+
+# Recent DVI (2011)
+
+dvi2011 <- p224r63_2011[[4]]-p224r63_2011[[3]] # difference between infrared light and red light
+dvi1988 <- p224r63_1988[[4]] - p224r63_1988[[3]] 
+
+diffdvi <- dvi1988 - dvi2011
+cl <- colorRampPalette(c("blue", "white", "red"))(100)
+plot(diffdvi, col=cl)
 
