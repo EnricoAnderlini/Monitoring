@@ -1,0 +1,12 @@
+# Imposto la working directory)
+setwd()
+# Installo i pacchetti
+install.packages(c("raster", "terra" "rgdal", "sf", "ggplot2", "viridis", "dplyr")) # il pacchetto rgdal non è disponibile per la mia versione di R
+# Carico i pacchetti 
+library(raster)
+library(terra)
+library(sf)
+library(ggplot2)
+library(viridis)
+library(dplyr)
+# la prima operazione che voglio fare è calcolare i NDVI per settembre, ottobre e novembre 2020
