@@ -10,3 +10,23 @@ library(ggplot2)
 library(viridis)
 library(dplyr)
 # la prima operazione che voglio fare è calcolare i NDVI per settembre, ottobre e novembre 2020
+# L'NDVI (Normalized Difference Degetation Index) è l'indice che misura la salute della vegetazione basandosi sulla riflettanza della luce nelle bande del rosso (Red) e del vicino infrarosso (Nir). Il valore varia da -1 a 1
+# per farlo, utilizzo la risoluzione spaziale a 10m e le bande rosso e NIR (near-infrared), poichè sono le più consigliate nella misurazione dello stato di salute della vegetazione
+# inizio con l'analisi del NDVI di Settembre 2020
+red_sep20 <- raster("C:/Users/Utente/Desktop/Enrico/Università/Progetto Monitoring/Sett 2020/GRANULE/L2A_T32TNQ_A027375_20200918T102719/IMG_DATA/R10m/T32TNQ_20200918T102031_B04_10m.jp2")
+nir_sep20 <- raster("C:/Users/Utente/Desktop/Enrico/Università/Progetto Monitoring/Sett 2020/GRANULE/L2A_T32TNQ_A027375_20200918T102719/IMG_DATA/R10m/T32TNQ_20200918T102031_B08_10m.jp2")
+# creo una funzione per calcolare il NDVI più facilmente 
+calcola_ndvi <-  function(nir, red) {(nir - red) / (nir + red)}
+ndvi_sep20 <- calcola_ndvi(nir_sep20, red_sep20)
+# creo un data frame per poter plottare i dati, ma per farlo devo ridurre la risoluzione del raster poichè ho troppi elementi
+ndvi_sett20_reduced <- aggregate(ndvi_sep20, fact = 8, fun = mean)
+ndvi_dfsett20_red <- as.data.frame(ndvi_dfsett20_reduced, xy = TRUE)
+colnames(ndvi_dfsett20_red) <- c("lon", "lat", "ndvi") # rinomino le colonne
+# utilizzo la funzione ggplot per visualizzare il NDVI di settembre 
+ggplot(ndvi_dfsett20_red, aes(x = lon, y = lat, fill = ndvi)) +
++ geom_tile() +
++ scale_fill_viridis_c() +
++ coord_equal() +
++ labs(title = "NDVI Settembre 2020", x = "Longitudine", y = "Latitudine")+
++ theme_minimal()
+ggsave(filename = "NDVI_plot_Sep20.png", width = 10, height = 8, dpi = 300) # salvo l'immagine generate per utilizzarla nella presentazione
