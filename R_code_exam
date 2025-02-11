@@ -1,6 +1,0 @@
-
-library(terra)
-library(raster)
-library(ggplot2)
-setwd("C:/Users/Utente/Desktop/Enrico/Università/Progetto Monitoring")
-getwd()
