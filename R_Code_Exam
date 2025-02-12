@@ -68,3 +68,48 @@ ggplot(ndvi_dfnov20_red, aes(x = lon, y = lat, fill = ndvi)) +
 + coord_equal() +
 + labs(title = "NDVI Novembre 2020", x = "Longitudine", y= "Latitudine") +
 + theme_minimal()
+# unisco i data frame per poter disporre i tre grafici in un unico layout e fare un confronto
+# creo una colonna che identifichi il mese per ogni data frame
+ndvi_df_sep$month <- "Settembre"
+ndvi_df_oct$month <- "Ottobre"
+ndvi_df_nov$month <- "Novembre"
+
+ndvi_all <- rbind(ndvi_df_sep, ndvi_df_oct, ndvi_df_nov)
+# costruisco un'immagine che metta  confronto i tre ndvi del 2020
+ggplot(ndvi_all2020, aes(x = lon, y = lat, fill = ndvi)) +
++ geom_tile() +
++ scale_fill_viridis_c() +
++ coord_equal() +
++ facet_wrap(~ month) +
++ labs(title = "Confronto NDVI 2020") +
++ theme_minimal() +
++ theme(axis.title = element_blank(), axis.text = element_blank(), axis.ticks = element_blank())
+ggsave(filename = "Confronto NDVI 2020.png", width = 10, height = 8, dpi = 300)
+# calcolare la differenza tra ottobre 2020 e 2023
+ndvi_diff_ott20_ott23 <- ndvi_ott23 - ndvi_ott20
+ndvi_diff_ott20_ott23_reduced <- aggregate(ndvi_diff_ott20_ott23, fact = 8, fun = mean) #riduco la risoluzione
+ndvi_dfdiff_ott20_ott23 <- as.data.frame(ndvi_diff_ott20_ott23_reduced, xy = TRUE) # creo il data frame
+colnames(ndvi_dfdiff_ott20_ott23) <- c("lon", "lat", "ndvi_diff")
+# plotto il grafico della differenza tra i due ndvi
+ggplot(ndvi_dfdiff_ott20_ott23, aes(x = lon, y = lat, fill = ndvi_diff)) + 
++ geom_tile() +
++ scale_fill_gradient2(low = "red", mid = "white", high = "green", midpoint = 0) +
++ coord_equal() +
++ labs(title = "Differenza NDVI Ottobre 2023-2020") +
++ theme_minimal() +
++ theme(axis.title = element_blank(), axis.text = element_blank(), axis.ticks = element_blank())
+# la mappa ottenuta segnala in rosso dove il ndvi è diminuito, verde dov'è aumentato, bianco dov'è rimasto invariato
+red_nov23 <- raster("Nov 2023/GRANULE/L2A_T32TNQ_A034983_20231117T102216/IMG_DATA/R10m/T32TNQ_20231117T102219_B04_10m.jp2")
+nir_nov23 <- raster("Nov 2023/GRANULE/L2A_T32TNQ_A034983_20231117T102216/IMG_DATA/R10m/T32TNQ_20231117T102219_B08_10m.jp2")
+ndvi_nov23 <- calcola_ndvi(nir_nov23, red_nov23)
+ndvi_diff_nov23_nov20 <- ndvi_nov23 - ndvi_nov20
+ndvi_diff_nov23_nov20_reduced <- aggregate(ndvi_diff_nov23_nov20, fact = 8, fun = mean)
+ndvi_dfdiff_nov23_nov20 <- as.data.frame(ndvi_diff_nov23_nov20_reduced, xy = TRUE)
+colnames(ndvi_dfdiff_nov23_nov20) <- c("lon", "lat", "ndvi_diff")
+ggplot(ndvi_dfdiff_nov23_nov20, aes(x = lon, y = lat, fill = ndvi_diff)) +
++ geom_tile() +
++ scale_fill_gradient2(low = "red", mid = "white", high = "green", midpoint = 0) +
++ coord_equal() +
++ labs(title = "Differenza NDVI Novembre 2023-2020") +
++ theme_minimal() +
++ theme(axis.title = element_blank(), axis.text = element_blank(), axis.ticks = element_blank())
