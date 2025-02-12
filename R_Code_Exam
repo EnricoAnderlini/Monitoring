@@ -1,7 +1,7 @@
 # Imposto la working directory)
-setwd()
+setwd("C:/Users/Utente/Desktop/Enrico/Università/Progetto Monitoring")
 # Installo i pacchetti
-install.packages(c("raster", "terra" "rgdal", "sf", "ggplot2", "viridis", "dplyr")) # il pacchetto rgdal non è disponibile per la mia versione di R
+install.packages(c("raster", "terra" "rgdal", "sf", "ggplot2", "viridis", "dplyr")) # i pacchetti rgdal e imageRy non sono disponibili per la mia versione di R
 # Carico i pacchetti 
 library(raster)
 library(terra)
@@ -13,20 +13,58 @@ library(dplyr)
 # L'NDVI (Normalized Difference Degetation Index) è l'indice che misura la salute della vegetazione basandosi sulla riflettanza della luce nelle bande del rosso (Red) e del vicino infrarosso (Nir). Il valore varia da -1 a 1
 # per farlo, utilizzo la risoluzione spaziale a 10m e le bande rosso e NIR (near-infrared), poichè sono le più consigliate nella misurazione dello stato di salute della vegetazione
 # inizio con l'analisi del NDVI di Settembre 2020
-red_sep20 <- raster("C:/Users/Utente/Desktop/Enrico/Università/Progetto Monitoring/Sett 2020/GRANULE/L2A_T32TNQ_A027375_20200918T102719/IMG_DATA/R10m/T32TNQ_20200918T102031_B04_10m.jp2")
-nir_sep20 <- raster("C:/Users/Utente/Desktop/Enrico/Università/Progetto Monitoring/Sett 2020/GRANULE/L2A_T32TNQ_A027375_20200918T102719/IMG_DATA/R10m/T32TNQ_20200918T102031_B08_10m.jp2")
+red_sep20 <- raster("Sett 2020/GRANULE/L2A_T32TNQ_A027375_20200918T102719/IMG_DATA/R10m/T32TNQ_20200918T102031_B04_10m.jp2")
+nir_sep20 <- raster("Sett 2020/GRANULE/L2A_T32TNQ_A027375_20200918T102719/IMG_DATA/R10m/T32TNQ_20200918T102031_B08_10m.jp2")
 # creo una funzione per calcolare il NDVI più facilmente 
 calcola_ndvi <-  function(nir, red) {(nir - red) / (nir + red)}
 ndvi_sep20 <- calcola_ndvi(nir_sep20, red_sep20)
+ndvi_sep20
+summary (ndvi_sep20)
+#             layer
+Min.    -1.0000000
+1st Qu.  0.2563987
+Median   0.4606321
+3rd Qu.  0.5381215
+Max.     1.0000000
+NA's     0.0000000
+mean_ndvi_sep20 <- cellStats(ndvi_sep20, stat = "mean", na.rm = TRUE)
+cat(("NDVI medio per settembre 2020", mean_ndvi_sep20. "\n"))
+# NDVI medio per settembre 2020 0.3886611
 # creo un data frame per poter plottare i dati, ma per farlo devo ridurre la risoluzione del raster poichè ho troppi elementi
 ndvi_sett20_reduced <- aggregate(ndvi_sep20, fact = 8, fun = mean)
 ndvi_dfsett20_red <- as.data.frame(ndvi_dfsett20_reduced, xy = TRUE)
 colnames(ndvi_dfsett20_red) <- c("lon", "lat", "ndvi") # rinomino le colonne
 # utilizzo la funzione ggplot per visualizzare il NDVI di settembre 
-ggplot(ndvi_dfsett20_red, aes(x = lon, y = lat, fill = ndvi)) +
-+ geom_tile() +
-+ scale_fill_viridis_c() +
-+ coord_equal() +
-+ labs(title = "NDVI Settembre 2020", x = "Longitudine", y = "Latitudine")+
-+ theme_minimal()
+ggplot(ndvi_dfsett20_red, aes(x = lon, y = lat, fill = ndvi)) + #definisco le estetiche, ovvero come i dati sono mappati nel plot
++ geom_tile() + # funzione che disegna rettangoli in base ad ogni punto del data frame e colora ogni rettangolo in base al NDVI
++ scale_fill_viridis_c() + # imposta la scala di colori utilizzando il set viridis per valori continui
++ coord_equal() + # per la corretta rappresentazione grafica degli assi x e y
++ labs(title = "NDVI Settembre 2020", x = "Longitudine", y = "Latitudine")+ #per dare un titolo al grafico e agli assi
++ theme_minimal() # tema minimale per far risaltare i dati
 ggsave(filename = "NDVI_plot_Sep20.png", width = 10, height = 8, dpi = 300) # salvo l'immagine generate per utilizzarla nella presentazione
+# ora faccio la stessa cosa per ottobre 2020
+red_ott20 <- raster("Ott 2020/GRANULE/L2A_T32TNQ_A027947_20201028T102748/IMG_DATA/R10m/T32TNQ_20201028T102141_B04_10m.jp2")
+nir_ott20 <- raster("Ott 2020/GRANULE/L2A_T32TNQ_A027947_20201028T102748/IMG_DATA/R10m/T32TNQ_20201028T102141_B08_10m.jp2")
+ndvi_ott20 <- calcola_ndvi(nir_ott20, red_ott20)
+ndvi_ott20_reduced <- aggregate(ndvi_ott20, fact = 8, fun = mean)
+ndvi_dfott20_red <- as.data.frame(ndvi_ott20_reduced, xy = TRUE)
+colnames(ndvi_dfott20_red) <- c("lon", "lat", "ndvi")
+ggplot(ndvi_dfott20_red, aes(x = lon, y = lat, fill = ndvi)) +
++ geom_tile() +
++ scale_fill_viridis_c() + 
++ coord_equal() +
++ labs(title = "NDVI Ottobre 2020", x = "Longitudine", y= "Latitudine") +
++ theme_minimal()
+ggsave(filename = "NDVI_plot_Ott20.png", width = 10, height = 10, dpi = 300)
+# e per novembre 2020
+red_nov20 <- <- raster("Nov 2020/GRANULE/L2A_T32TNQ_A019396_20201122T102335/IMG_DATA/R10m/T32TNQ_20201122T102339_B04_10m.jp2")
+nir_nov20 <- raster("Nov 2020/GRANULE/L2A_T32TNQ_A019396_20201122T102335/IMG_DATA/R10m/T32TNQ_20201122T102339_B08_10m.jp2")
+ndvi_nov20 <- calcola_ndvi(nir_nov20, red_nov20)
+ndvi_dfnov20_red <- as.data.frame(ndvi_nov20_reduced, xy = TRUE)
+colnames(ndvi_dfnov20_red) <- c("lon", "lat", "ndvi")
+ggplot(ndvi_dfnov20_red, aes(x = lon, y = lat, fill = ndvi)) +
++ geom_tile() +
++ scale_fill_viridis_c() + 
++ coord_equal() +
++ labs(title = "NDVI Novembre 2020", x = "Longitudine", y= "Latitudine") +
++ theme_minimal()
