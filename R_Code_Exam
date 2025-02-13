@@ -1,11 +1,10 @@
 # Imposto la working directory)
 setwd("C:/Users/Utente/Desktop/Enrico/Università/Progetto Monitoring")
 # Installo i pacchetti
-install.packages(c("raster", "terra" "rgdal", "sf", "ggplot2", "viridis", "dplyr")) # i pacchetti rgdal e imageRy non sono disponibili per la mia versione di R
+install.packages(c("raster", "terra" "rgdal", "imageRy" "ggplot2", "viridis", "dplyr")) # i pacchetti rgdal e imageRy non sono disponibili per la mia versione di R
 # Carico i pacchetti 
 library(raster)
 library(terra)
-library(sf)
 library(ggplot2)
 library(viridis)
 library(dplyr)
@@ -19,14 +18,6 @@ nir_sep20 <- raster("Sett 2020/GRANULE/L2A_T32TNQ_A027375_20200918T102719/IMG_DA
 calcola_ndvi <-  function(nir, red) {(nir - red) / (nir + red)}
 ndvi_sep20 <- calcola_ndvi(nir_sep20, red_sep20)
 ndvi_sep20
-summary (ndvi_sep20)
-#             layer
-Min.    -1.0000000
-1st Qu.  0.2563987
-Median   0.4606321
-3rd Qu.  0.5381215
-Max.     1.0000000
-NA's     0.0000000
 mean_ndvi_sep20 <- cellStats(ndvi_sep20, stat = "mean", na.rm = TRUE)
 cat(("NDVI medio per settembre 2020", mean_ndvi_sep20. "\n"))
 # NDVI medio per settembre 2020 0.3886611
@@ -34,6 +25,9 @@ cat(("NDVI medio per settembre 2020", mean_ndvi_sep20. "\n"))
 ndvi_sett20_reduced <- aggregate(ndvi_sep20, fact = 8, fun = mean)
 ndvi_dfsett20_red <- as.data.frame(ndvi_dfsett20_reduced, xy = TRUE)
 colnames(ndvi_dfsett20_red) <- c("lon", "lat", "ndvi") # rinomino le colonne
+summary(ndvi_dfsett20_red$ndvi)
+ Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+-0.2172  0.2723  0.4568  0.3886  0.5284  0.7243 
 # utilizzo la funzione ggplot per visualizzare il NDVI di settembre 
 ggplot(ndvi_dfsett20_red, aes(x = lon, y = lat, fill = ndvi)) + #definisco le estetiche, ovvero come i dati sono mappati nel plot
 + geom_tile() + # funzione che disegna rettangoli in base ad ogni punto del data frame e colora ogni rettangolo in base al NDVI
@@ -49,6 +43,9 @@ ndvi_ott20 <- calcola_ndvi(nir_ott20, red_ott20)
 ndvi_ott20_reduced <- aggregate(ndvi_ott20, fact = 8, fun = mean)
 ndvi_dfott20_red <- as.data.frame(ndvi_ott20_reduced, xy = TRUE)
 colnames(ndvi_dfott20_red) <- c("lon", "lat", "ndvi")
+summary(ndvi_dfott20_red$ndvi)
+ Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+-0.2719  0.2238  0.3403  0.3072  0.4085  0.7224 
 ggplot(ndvi_dfott20_red, aes(x = lon, y = lat, fill = ndvi)) +
 + geom_tile() +
 + scale_fill_viridis_c() + 
@@ -60,8 +57,22 @@ ggsave(filename = "NDVI_plot_Ott20.png", width = 10, height = 10, dpi = 300)
 red_nov20 <- <- raster("Nov 2020/GRANULE/L2A_T32TNQ_A019396_20201122T102335/IMG_DATA/R10m/T32TNQ_20201122T102339_B04_10m.jp2")
 nir_nov20 <- raster("Nov 2020/GRANULE/L2A_T32TNQ_A019396_20201122T102335/IMG_DATA/R10m/T32TNQ_20201122T102339_B08_10m.jp2")
 ndvi_nov20 <- calcola_ndvi(nir_nov20, red_nov20)
+ndvi_nov20_reduced <- aggregate(ndvi_nov20, fact = 8, fun = mean)
 ndvi_dfnov20_red <- as.data.frame(ndvi_nov20_reduced, xy = TRUE)
 colnames(ndvi_dfnov20_red) <- c("lon", "lat", "ndvi")
+summary(ndvi_dfnov20_red$ndvi)
+Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+-0.2475  0.1760  0.2525  0.2509  0.3240  0.7210
+# calcola la deviazione standard per i tre mesi 
+sd_sett20 <- sd(ndvi_dfsett20_red$ndvi, na.rm = TRUE)
+sd_ott20 <- sd(ndvi_dfott20_red$ndvi, na.rm = TRUE)
+sd_nov20 <- sd(ndvi_dfnov20_red$ndvi, na.rm = TRUE)
+cat("Deviazione standard - Settembre 2020:", sd_sett20, "\n")
+Deviazione standard - Settembre 2020: 0.1783337 
+cat("Deviazione standard - Ottobre 2020:", sd_ott20, "\n")
+Deviazione standard - Ottobre 2020: 0.1502804 
+cat("Deviazione standard - Novembre 2020:", sd_nov20, "\n")
+Deviazione standard - Novembre 2020: 0.1297538 
 ggplot(ndvi_dfnov20_red, aes(x = lon, y = lat, fill = ndvi)) +
 + geom_tile() +
 + scale_fill_viridis_c() + 
@@ -70,11 +81,11 @@ ggplot(ndvi_dfnov20_red, aes(x = lon, y = lat, fill = ndvi)) +
 + theme_minimal()
 # unisco i data frame per poter disporre i tre grafici in un unico layout e fare un confronto
 # creo una colonna che identifichi il mese per ogni data frame
-ndvi_df_sep$month <- "Settembre"
-ndvi_df_oct$month <- "Ottobre"
-ndvi_df_nov$month <- "Novembre"
+ndvi_dfsett20_red$month <- "Settembre 2020"
+ndvi_dfott20_red$month <- "Ottobre 2020"
+ndvi_dfnov20_red$month <- "Novembre 2020"
 
-ndvi_all <- rbind(ndvi_df_sep, ndvi_df_oct, ndvi_df_nov)
+ndvi_all2020 <- rbind(ndvi_dfsett20_red, ndvi_dfott20_red, ndvi_dfnov20_red)
 # costruisco un'immagine che metta  confronto i tre ndvi del 2020
 ggplot(ndvi_all2020, aes(x = lon, y = lat, fill = ndvi)) +
 + geom_tile() +
@@ -85,7 +96,10 @@ ggplot(ndvi_all2020, aes(x = lon, y = lat, fill = ndvi)) +
 + theme_minimal() +
 + theme(axis.title = element_blank(), axis.text = element_blank(), axis.ticks = element_blank())
 ggsave(filename = "Confronto NDVI 2020.png", width = 10, height = 8, dpi = 300)
-# calcolare la differenza tra ottobre 2020 e 2023
+# ora calcolo la differenza tra ottobre 2020 e 2023
+red_ott23 <- raster("Ott 2023/GRANULE/L2A_T32TNQ_A034411_20231008T102305/IMG_DATA/R10m/T32TNQ_20231008T101829_B04_10m.jp2")
+nir_ott23 <- raster("Ott 2023/GRANULE/L2A_T32TNQ_A034411_20231008T102305/IMG_DATA/R10m/T32TNQ_20231008T101829_B08_10m.jp2")
+ndvi_ott23 <- calcola_ndvi(nir_ott23, red_ott23)
 ndvi_diff_ott20_ott23 <- ndvi_ott23 - ndvi_ott20
 ndvi_diff_ott20_ott23_reduced <- aggregate(ndvi_diff_ott20_ott23, fact = 8, fun = mean) #riduco la risoluzione
 ndvi_dfdiff_ott20_ott23 <- as.data.frame(ndvi_diff_ott20_ott23_reduced, xy = TRUE) # creo il data frame
@@ -99,6 +113,14 @@ ggplot(ndvi_dfdiff_ott20_ott23, aes(x = lon, y = lat, fill = ndvi_diff)) +
 + theme_minimal() +
 + theme(axis.title = element_blank(), axis.text = element_blank(), axis.ticks = element_blank())
 # la mappa ottenuta segnala in rosso dove il ndvi è diminuito, verde dov'è aumentato, bianco dov'è rimasto invariato
+# voglio misurare la percentuale di deforestazione/disboscamento tra i due periodi
+diff_vals_ott <- getValues(ndvi_diff_ott20_ott23) # estraggo i valori del raster di differenzaù
+# # Calcola la percentuale di pixel con una diminuzione del NDVI inferiore a 0,2, che ritengo significativa
+threshold <- -0.2
+percent_deforestazione <- sum(diff_vals_ott < threshold, na.rm = TRUE) / length(diff_vals_ott) * 100 
+cat("Percentuale di deforestazione (soglia", threshold, "):", round(percent_deforestazione, 2), "%\n")
+Percentuale di deforestazione (soglia -0.2 ): 6.44 %
+# Ora svolgo un procedimento simile per il mese di novembre
 red_nov23 <- raster("Nov 2023/GRANULE/L2A_T32TNQ_A034983_20231117T102216/IMG_DATA/R10m/T32TNQ_20231117T102219_B04_10m.jp2")
 nir_nov23 <- raster("Nov 2023/GRANULE/L2A_T32TNQ_A034983_20231117T102216/IMG_DATA/R10m/T32TNQ_20231117T102219_B08_10m.jp2")
 ndvi_nov23 <- calcola_ndvi(nir_nov23, red_nov23)
