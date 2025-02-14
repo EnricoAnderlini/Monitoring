@@ -1,0 +1,119 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\title[Vegetation Coverage Variability]%
+{Analysis of Vegetation Coverage Variability \\
+Near the Appennino Tosco-Emiliano National Park}
+
+\author{Enrico Anderlini}
+\institute{University of Bologna - Unibo\\
+
+\href{https://github.com/EnricoAnderlini}{Link to my GitHub account: https://github.com/EnricoAnderlini}}
+
+\date{} % Leave empty if you don't want a date on the title page
+
+\begin{document}
+
+%--- First Slide (Title Page) -----------------------------------------%
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%--- Second Slide: Dataset --------------------------------------------%
+\begin{frame}{The Dataset: Sentinel-2}
+  \begin{itemize}
+    \item \textbf{Downloaded from Copernicus:} user-friendly platform where you can intuitively select any area of interest.
+    \item \textbf{Sentinel-2 for vegetation studies:} high-resolution imagery, especially in the Red and Near-Infrared (NIR) bands, makes it ideal for analyzing plant health and coverage.
+    \item The ability to choose any region of the globe simplifies the collection of targeted data.
+  \end{itemize}
+\end{frame}
+
+%--- Third Slide: NDVI Calculation (Single Month Example) --------------%
+\begin{frame}[fragile]{NDVI Calculation Example}
+  \textbf{Step-by-step approach for a single month (September 2020):}
+  \vspace{0.1cm}
+  \footnotesize
+  \begin{verbatim}
+  setwd()
+  library(terra)
+  library(ggplot2)
+
+  # Load the Red (B04) and NIR (B08) bands from 10m
+  red_sett20 <- rast()
+  nir_sett20 <- rast()
+
+  # Create a funcion to calculate NDVI
+  calcola_ndvi <- function(nir, red) {(nir - red) / (nir + red)}
+  ndvi_sep20 <- calcola_ndvi(nir_sep20, red_sep20)
+  \end{verbatim}
+\end{frame}
+
+%--- Fourth Slide: NDVI Plotting for September --------------%
+\begin{frame}{Plotting September 2020}
+ \texttt{ndvi\_dfsett20\_red <- as.data.frame(ndvi\_sett20\_reduced, xy = TRUE) \\}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{NDVI_plot_Sep20.png}     
+  \end{center}
+\end{frame}
+%--- Fifth Slide: Comparison of Three Months -------------------------%
+\begin{frame}[fragile]{Comparison of Three Months (2020)}
+  \vspace{0.2cm}
+  \textbf{Visual comparison of NDVI for September, October and November 2020:}
+  \vspace{0.3cm}
+  \footnotesize
+  \begin{verbatim}
+  # Joined three months as a data frame to plot them together
+  ndvi_all2020 <- rbind(ndvi_dfsett20, ndvi_dfott20, ndvi_dfnov20)
+  \end{verbatim}
+   \begin{center}
+    \vspace{-3cm}
+    \centering
+    \includegraphics[width=1.2\textwidth]{Confronto NDVI 2020.png} 
+  \end{center}
+\end{frame}
+
+%--- Sixth Slide: Histogram of NDVI -----------------------------------%
+\begin{frame}[fragile]{Histogram of NDVI}
+  \vspace{0.2cm}
+  \textbf{Analyzing the distribution of NDVI values for three months in 2020:}
+  \vspace{0.2cm}
+  \textbf{Plotting a histogram to see the distribution} 
+  \centering
+    \includegraphics[width=0.8\textwidth]{Distribution_NDVI_2020.png}
+\end{frame}
+
+%--- Seventh Slide: Boxplot of NDVI -------------------------------------%
+\begin{frame}[fragile]{Boxplot of NDVI}
+  \vspace{0.1cm}
+  \textbf{Comparing NDVI distributions across three months}
+  \vspace{0.1cm}
+  \centering
+    \includegraphics[width=1.0\textwidth]{Boxplot_NDVI_2020.png}
+ \end{frame}
+
+ %--- Eighth Slide: Differences between years -------------------------------------%
+\begin{frame}[fragile]{Variations from 2020 to 2023}
+  \textbf{NDVI's difference between October 2020 and 2023}
+  \centering
+  \includegraphics[width=0.8\textwidth]{Differenza_NDVI_Ottobre_2020-2023.png}
+\end{frame}
+
+%--- Ninth Slide: Plotting the results -------------------------------------%
+\begin{frame}{Variations from 2020 to 2023}
+  \textbf{NDVI's difference between November 2020 and 2023}
+  \centering
+  \includegraphics[width=0.8\textwidth]{Differenza_NDVI_Novembre_2020-2030.png}
+\end{frame}
+
+%--- Tenth Slide: Calculating the percentage of deforestation -------------------------------------%
+\begin{frame}{NDVI variations during the years for the month of October}
+  \centering
+  \includegraphics[width=1.0\textwidth]{NDVI_distribution_per_year.png}
+    \end{frame}
+\end{document}
