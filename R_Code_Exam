@@ -175,6 +175,7 @@ year  mean_ndvi sd_ndvi min_ndvi max_ndvi
 2 2021      0.321   0.164   -0.226    0.729
 3 2022      0.331   0.164   -0.112    0.701
 4 2023      0.359   0.174   -0.179    0.738ggplot(ndvi_ott_all, aes(x = factor(year), y = ndvi, fill = factor(year))) +
+# With a boxplot I can see the mean and standard deviation values
 + geom_boxplot() +
 + labs(title = "NDVI Distribution per Year", x = "Year", y = "NDVI") +
 + theme_minimal(base_size = 18) +
