@@ -1,7 +1,7 @@
 # Imposto la working directory
 setwd("C:/Users/Utente/Desktop/Enrico/Università/Progetto Monitoring/Congo")
 # Installation of packages
-install.packages(c("raster", "terra" "rgdal", "imageRy" "ggplot2", "viridis", "dplyr")) 
+install.packages(c("terra", "imageRy" "ggplot2", "viridis", "dplyr")) 
 # Loading the packages 
 library(raster)
 library(terra)
@@ -10,15 +10,13 @@ library(viridis)
 library(dplyr)
 # la prima operazione che voglio fare è calcolare i NDVI per settembre, ottobre e novembre 2020
 # L'NDVI (Normalized Difference Degetation Index) è l'indice che misura la salute della vegetazione basandosi sulla riflettanza della luce nelle bande del rosso (Red) e del vicino infrarosso (Nir). Il valore varia da -1 a 1
-# per farlo, utilizzo la risoluzione spaziale a 10m e le bande rosso e NIR (near-infrared), poichè sono le più consigliate nella misurazione dello stato di salute della vegetazione
-red23 <- rast("LC08_L2SP_182062_20230622_20230630_02_T1_SR_B4.TIF")
-nir23 <- rast("LC08_L2SP_182062_20230622_20230630_02_T1_SR_B5.TIF")
-green23 <- rast("LC08_L2SP_182062_20230622_20230630_02_T1_SR_B3.TIF")
+# per farlo, utilizzo la risoluzione spaziale a 30m e le bande rosso e NIR (near-infrared), poichè sono le più consigliate nella misurazione dello stato di salute della vegetazione
+nir23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B5.TIF")
+red23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B4.TIF")
+green23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B3.TIF")
 blue23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B2.TIF")
-Naturalcolors2023 <- c(red23, green23, blue23)
-im.plotRGB(Naturalcolors2023, r=1, g=2, b=3)
 ###
-Congo2023 <- c(nir, red, green)
+Congo2023 <- c(blue23, red23, green23, nir23)
 im.plotRGB(Congo2023, r=1, g=2, b=3)
 im.plotRGB(Congo2023, r=3, g=2, b=1)
 im.plotRGB(Congo2023, r=3, g=1, b=2)
