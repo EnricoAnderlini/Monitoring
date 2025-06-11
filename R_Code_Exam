@@ -3,12 +3,12 @@ setwd("C:/Users/Utente/Desktop/Enrico/Università/Progetto Monitoring/Congo")
 # Installation of packages
 install.packages(c("terra", "imageRy" "ggplot2", "viridis", "dplyr")) 
 # Loading the packages 
-library(raster)
 library(terra)
+library(imageRy)
 library(ggplot2)
 library(viridis)
 library(dplyr)
-# la prima operazione che voglio fare è calcolare i NDVI per settembre, ottobre e novembre 2020
+# 
 # L'NDVI (Normalized Difference Degetation Index) è l'indice che misura la salute della vegetazione basandosi sulla riflettanza della luce nelle bande del rosso (Red) e del vicino infrarosso (Nir). Il valore varia da -1 a 1
 # per farlo, utilizzo la risoluzione spaziale a 30m e le bande rosso e NIR (near-infrared), poichè sono le più consigliate nella misurazione dello stato di salute della vegetazione
 nir23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B5.TIF")
@@ -16,8 +16,9 @@ red23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B4.TIF")
 green23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B3.TIF")
 blue23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B2.TIF")
 ###
-Congo2023 <- c(blue23, red23, green23, nir23)
-im.plotRGB(Congo2023, r=4, g=2, b=3)
+Congo2023 <- c(red23, green23, blue23, nir23)
+im.plotRGB(Congo2023, r=1, g=2, b=3) # Natural colors
+im.plotRGB(Congo2023, r=4, g=2, b=3) # False color vegetation red
 im.plotRGB(Congo2023, r=3, g=2, b=4)
 im.plotRGB(Congo2023, r=3, g=4, b=2)
 ###
@@ -25,9 +26,7 @@ nir13 <- rast("Luglio 13/LC08_L2SP_182062_20130728_20200912_02_T1_SR_B5.TIF")
 red13 <- rast("Luglio 13/LC08_L2SP_182062_20130728_20200912_02_T1_SR_B4.TIF")
 green13 <- rast("Luglio 13/LC08_L2SP_182062_20130728_20200912_02_T1_SR_B3.TIF")
 blue13 <- rast("Luglio 13/LC08_L2SP_182062_20130728_20200912_02_T1_SR_B2.TIF")
-Naturalcolors2013 <- c(red13, green13, blue13)
-im.plotRGB(Naturalcolors2013, r=1, g=2, b=3)
-Congo2013 <- c(nir13, red13, green13)
+Congo2013 <- c(red13, green13, blue13, nir13)
 im.plotRGB(Congo2013, r=1, g=2, b=3)
 ###
 im.plotRGB(Congo2023, r=1, g=2, b=3)
@@ -40,14 +39,14 @@ im.plotRGB(Congo2013, r=2, g=1, b=3)
 im.plotRGB(Congo2023, r=3, g=2, b=1)
 im.plotRGB(Congo2013, r=3, g=2, b=1)
 # calulate DVI & NDVI
-dvi2013 = Congo2013[[1]] - Congo2013[[2]]
-dvi2023 = Congo2023[[1]] - Congo2023[[2]]
+dvi2013 = Congo2013[[4]] - Congo2013[[1]
+dvi2023 = Congo2023[[4]] - Congo2023[[1]]
 cl <- colorRampPalette(c("darkblue", "yellow", "red", "black")) (100) ###
 par(mfrow=c(1,2))
 plot(dvi2013, col=cl)
 plot(dvi2023, col=cl)
-ndvi2013 = dvi2013 / (Congo2013[[1]] + Congo2013[[2]])
-ndvi2023 = dvi2023 / (Congo2023[[1]] + Congo2023[[2]])
+ndvi2013 = dvi2013 / (Congo2013[[4]] + Congo2013[[1]])
+ndvi2023 = dvi2023 / (Congo2023[[4]] + Congo2023[[1]])
 par(mfrow=c(1,2))
 plot(ndvi2013, col=cl)
 plot(ndvi2023, col=cl)
