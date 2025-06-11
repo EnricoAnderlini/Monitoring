@@ -17,9 +17,9 @@ green23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B3.TIF")
 blue23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B2.TIF")
 ###
 Congo2023 <- c(blue23, red23, green23, nir23)
-im.plotRGB(Congo2023, r=1, g=2, b=3)
-im.plotRGB(Congo2023, r=3, g=2, b=1)
-im.plotRGB(Congo2023, r=3, g=1, b=2)
+im.plotRGB(Congo2023, r=4, g=2, b=3)
+im.plotRGB(Congo2023, r=3, g=2, b=4)
+im.plotRGB(Congo2023, r=3, g=4, b=2)
 ###
 nir13 <- rast("Luglio 13/LC08_L2SP_182062_20130728_20200912_02_T1_SR_B5.TIF")
 red13 <- rast("Luglio 13/LC08_L2SP_182062_20130728_20200912_02_T1_SR_B4.TIF")
