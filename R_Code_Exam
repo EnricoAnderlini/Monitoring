@@ -1,13 +1,16 @@
 # Imposto la working directory
 setwd("C:/Users/Utente/Desktop/Enrico/Università/Progetto Monitoring/Congo")
+
 # Installation of packages
 install.packages(c("terra", "imageRy" "ggplot2", "viridis", "dplyr")) 
+
 # Loading the packages 
 library(terra)
 library(imageRy)
 library(ggplot2)
 library(viridis)
 library(dplyr)
+
 # 
 # L'NDVI (Normalized Difference Degetation Index) è l'indice che misura la salute della vegetazione basandosi sulla riflettanza della luce nelle bande del rosso (Red) e del vicino infrarosso (Nir). Il valore varia da -1 a 1
 # per farlo, utilizzo la risoluzione spaziale a 30m e le bande rosso e NIR (near-infrared), poichè sono le più consigliate nella misurazione dello stato di salute della vegetazione
