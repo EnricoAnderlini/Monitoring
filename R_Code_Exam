@@ -1,4 +1,4 @@
-# Imposto la working directory
+# Setting the working directory
 setwd("C:/Users/Utente/Desktop/Enrico/Università/Progetto Monitoring/Congo")
 
 # Installation of packages
