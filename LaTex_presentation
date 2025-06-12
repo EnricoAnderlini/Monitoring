@@ -1,5 +1,7 @@
 \documentclass{beamer}
 
+\usetheme{Frankfurt}
+\usecolortheme{dove}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -7,9 +9,11 @@
 \usepackage{listings}
 \usepackage{xcolor}
 
-\title[Vegetation Coverage Variability]%
-{Analysis of Vegetation Coverage Variability \\
-Near the Appennino Tosco-Emiliano National Park}
+\usetheme{AnnArbor}
+\usecolortheme{spruce}
+
+\title[Reforestation Project]%
+{Reforestation Project in the Pool region, South-East Congo}
 
 \author{Enrico Anderlini}
 \institute{University of Bologna - Unibo\\
@@ -26,94 +30,183 @@ Near the Appennino Tosco-Emiliano National Park}
 \end{frame}
 
 %--- Second Slide: Dataset --------------------------------------------%
-\begin{frame}{The Dataset: Sentinel-2}
+\begin{frame}{The Dataset: Landsat 2 level-2}
   \begin{itemize}
-    \item \textbf{Downloaded from Copernicus:} user-friendly platform where you can intuitively select any area of interest.
-    \item \textbf{Sentinel-2 for vegetation studies:} high-resolution imagery, especially in the Red and Near-Infrared (NIR) bands, makes it ideal for analyzing plant health and coverage.
-    \item The ability to choose any region of the globe simplifies the collection of targeted data.
+    \item \textbf{Downloaded from USGS Earth Explorer:} user-friendly platform where you can intuitively select any area of interest, and the data set needed
+    \item \textbf{Landsat 2 Level-2 for vegetation studies:} high-resolution images, especially in the Red and Near-Infrared (NIR) bands, from 30m
   \end{itemize}
 \end{frame}
 
-%--- Third Slide: NDVI Calculation (Single Month Example) --------------%
-\begin{frame}[fragile]{NDVI Calculation Example}
-  \textbf{Step-by-step approach for a single month (September 2020):}
+%--- Third Slide: Area of study --------------%
+\begin{frame}{Area of study}
+ {\Large \textbf{Pool Region, Congo}}\\[0.5em]
+  {\small National Reforestation programme (PRONAR), intended to plant 42.000 acacia trees }\\[2em]
+\begin{figure}
+      \centering
+      \includegraphics[width=0.8\linewidth]{Congo pool.png}
+      \label{fig:enter-label}
+  \end{figure}
+\end{frame}
+
+%--- Third Slide: Data set --------------%
+\begin{frame}[fragile]{Import data set}
+  \textbf{Step-by-step approach for importing the data set:}
   \vspace{0.1cm}
-  \footnotesize
+  \scriptsize  
   \begin{verbatim}
-  setwd()
+  setwd("C:/Users/Utente/Desktop/Enrico/Università/Progetto Monitoring/Congo")
   library(terra)
+  library(imageRy)
   library(ggplot2)
+  library(viridis)
+  
+  # Load all bands from 30m for all the different years
+  # example with the year 2023
+  nir23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B5.TIF")
+  red23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B4.TIF")
+  green23 <- rast("Giugno23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B3.TIF")
+  blue23 <- rast("Giugno 23/LC08_L2SP_182062_20230622_20230630_02_T1_SR_B2.TIF")
 
-  # Load the Red (B04) and NIR (B08) bands from 10m
-  red_sett20 <- rast()
-  nir_sett20 <- rast()
-
-  # Create a funcion to calculate NDVI
-  calcola_ndvi <- function(nir, red) {(nir - red) / (nir + red)}
-  ndvi_sep20 <- calcola_ndvi(nir_sep20, red_sep20)
-  \end{verbatim}
+ \end{verbatim}
 \end{frame}
 
-%--- Fourth Slide: NDVI Plotting for September --------------%
-\begin{frame}{Plotting September 2020}
- \texttt{ndvi\_dfsett20\_red <- as.data.frame(ndvi\_sett20\_reduced, xy = TRUE) \\}
+%--- Fourth Slide: Natural colors 2013 --------------%
+\begin{frame}{Natural colors 2013}
+ \texttt{Congo2013 <- c(red13, green13, blue13, nir13)
+im.plotRGB(Congo2013, r=1, g=2, b=3) \\}
   \begin{center}
-    \includegraphics[width=0.8\textwidth]{NDVI_plot_Sep20.png}     
+    \includegraphics[width=0.4\textwidth]{Natural_colors2013.png}     
   \end{center}
 \end{frame}
+
 %--- Fifth Slide: Comparison of Three Months -------------------------%
-\begin{frame}[fragile]{Comparison of Three Months (2020)}
-  \vspace{0.2cm}
-  \textbf{Visual comparison of NDVI for September, October and November 2020:}
+\begin{frame}[fragile]{False colors 2013}
+  \begin{itemize}
+      \item  im.plotRGB(Congo2013, r=4, g=2, b=3) 
+ \item im.plotRGB(Congo2013, r=3, g=2, b=4) 
+ \item im.plotRGB(Congo2013, r=3, g=4, b=2)
+  \end{itemize}
   \vspace{0.3cm}
-  \footnotesize
-  \begin{verbatim}
-  # Joined three months as a data frame to plot them together
-  ndvi_all2020 <- rbind(ndvi_dfsett20, ndvi_dfott20, ndvi_dfnov20)
-  \end{verbatim}
    \begin{center}
-    \vspace{-3cm}
-    \centering
-    \includegraphics[width=1.2\textwidth]{Confronto NDVI 2020.png} 
+    \vspace{0.5cm}
+    \includegraphics[width=0.9\textwidth]{False_colors_2013.png} 
   \end{center}
 \end{frame}
 
-%--- Sixth Slide: Histogram of NDVI -----------------------------------%
-\begin{frame}[fragile]{Histogram of NDVI}
-  \vspace{0.2cm}
-  \textbf{Analyzing the distribution of NDVI values for three months in 2020:}
-  \vspace{0.2cm}
-  \textbf{Plotting a histogram to see the distribution} 
-  \centering
-    \includegraphics[width=0.8\textwidth]{Distribution_NDVI_2020.png}
+%--- Sixth Slide: Calculation of DVI -----------------------------------%
+\begin{frame}[fragile]{Calculating the DVI Variations}
+  \vspace{0.5cm}
+    \textbf Using the NIR and Red channels to calculate the Difference Vegetation Index 
+        
+    \begin{itemize}
+    \vspace{0.5cm}
+   \item  dvi2013 = Congo2013[[4]] - Congo2013[[1]]
+   \item  dvi2018 = Congo2018[[4]] - Congo2018[[1]]
+   \item  dvi2023 = Congo2023[[4]] - Congo2023[[1]]     
+    \end{itemize}
+     \vspace{0.5cm}  
 \end{frame}
 
-%--- Seventh Slide: Boxplot of NDVI -------------------------------------%
-\begin{frame}[fragile]{Boxplot of NDVI}
-  \vspace{0.1cm}
-  \textbf{Comparing NDVI distributions across three months}
-  \vspace{0.1cm}
+%--- Seventh Slide: Boxplot of DVI -------------------------------------%
+\begin{frame}[fragile]{DVI Variations over 10 years}
+  \vspace{0.5cm}
+  \textbf{Comparsion of the DVI between 2013, 2018 and 2023}
+  \vspace{3.5cm}
   \centering
-    \includegraphics[width=1.0\textwidth]{Boxplot_NDVI_2020.png}
+    \includegraphics[width=1.0\textwidth]{dvi2013_2018_2023.png}
  \end{frame}
 
  %--- Eighth Slide: Differences between years -------------------------------------%
-\begin{frame}[fragile]{Variations from 2020 to 2023}
-  \textbf{NDVI's difference between October 2020 and 2023}
+\begin{frame}[fragile]{NDVI variations from 2013 to 2023}
+  \textbf{Calulate the NDVI for the years 2013, 2018 and 2023}
+  \vspace{0.5cm}
+  \begin{itemize}
+      \item ndvi2013 = dvi2013 / (Congo2013[[4]] + Congo2013[[1]])
+      \item ndvi2018 = dvi2018 / (Congo2018[[4]] + Congo2018[[1]])
+\item ndvi2023 = dvi2023 / (Congo2023[[4]] + Congo2023[[1]])
+  \end{itemize}
   \centering
-  \includegraphics[width=0.8\textwidth]{Differenza_NDVI_Ottobre_2020-2023.png}
+   \vspace{0.5cm}
+  \
 \end{frame}
 
 %--- Ninth Slide: Plotting the results -------------------------------------%
-\begin{frame}{Variations from 2020 to 2023}
-  \textbf{NDVI's difference between November 2020 and 2023}
+\begin{frame}[fragile]{NDVI variations from 2013 to 2023}
+  \textbf{NDVI's difference between 2013 and 2023}
+  \vspace{0.5cm}
   \centering
-  \includegraphics[width=0.8\textwidth]{Differenza_NDVI_Novembre_2020-2030.png}
+   \vspace{0.5cm}
+  \includegraphics[width=1.0\textwidth]{ndvi2013_2018_2023.png}
 \end{frame}
 
-%--- Tenth Slide: Calculating the percentage of deforestation -------------------------------------%
-\begin{frame}{NDVI variations during the years for the month of October}
-  \centering
-  \includegraphics[width=1.0\textwidth]{NDVI_distribution_per_year.png}
-    \end{frame}
+%--- Tenth Slide: Plotting an histogram for the NDVI -------------------------------------%
+\begin{frame}[fragile]{Creation of an histogram for the distribution of NDVI}
+\footnotesize
+\begin{lstlisting}
+ndvi_rasters <- list("2013" = ndvi2013, "2018" = ndvi2018, 
+"2023" = ndvi2023)
+
+rast_to_df <- function(r, anno, tipo){
+  df <- as.data.frame(r, xy = FALSE, na.rm = TRUE)
+  data.frame(value = df[,1], year = anno, type = tipo)
+}
+
+df_ndvi <- bind_rows(
+  lapply(names(ndvi_rasters),
+         function(y) rast_to_df(ndvi_rasters[[y]], y, "NDVI"))
+)
+\end{lstlisting}
+\end{frame}
+
+%--- Elevnth Slide: Resulting histogram for the NDVI -------------------------------------%
+
+\begin{frame}
+\frametitle{NDVI Histogram}
+\centering
+\includegraphics[width=0.8\textwidth]{histogram_ndvi.png}
+\end{frame}
+
+%--- Twelevnth Slide: Plotting a boxplot for the NDVI -------------------------------------%
+\begin{frame}[fragile]{Creation of an boxplot for the distribution of NDVI}
+
+\begin{lstlisting}
+ggplot(df_ndvi, aes(x = year, y = value, fill = year))
+geom_boxplot(outlier.shape = NA, alpha = 0.6) 
+facet_wrap(~ type, scales = "free_y") 
+labs(title = "Boxplot NDVI by year",
+x = "Year", y = "Index value") 
+\end{lstlisting}
+\end{frame}
+
+%--- Thirteenth Slide: Resulting boxplot for the NDVI ------------------------
+
+\begin{frame}
+\frametitle{NDVI Boxplot}
+\centering
+\includegraphics[width=0.8\textwidth]{boxplot_ndvi.png}
+\end{frame}
+
+%--- Fourteenth Slide: Measuring the standard deviation ------------------------
+\begin{frame}[fragile]{Measuring Standard deviation 3x3 pixel}
+
+\begin{lstlisting}
+sd3nir23 <- focal(nir23, matrix(1/9, 3, 3), fun=sd)
+sd3nir13 <- focal(nir13, matrix(1/9, 3, 3), fun=sd)
+sd3nir18 <- focal(nir18, matrix(1/9, 3, 3), fun=sd)
+
+par(mfrow=c(1,3))
+plot(sd3nir13)
+plot(sd3nir18)
+plot(sd3nir23)
+\end{lstlisting}
+\end{frame}
+
+%--- Fifteenth Slide: Measuring the standard deviation -------------------------
+\begin{frame}
+\frametitle{Standard deviation 3x3}
+\centering
+\includegraphics[width=1.0\textwidth]{sd_2013_2018_2023.png}
+\end{frame}
+
 \end{document}
+
